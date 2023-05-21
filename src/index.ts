@@ -2,40 +2,22 @@ import "./config/env.js";
 import { openai } from "./config/openai.js";
 import { rwTwitterClient } from "./config/twitter.js";
 
-// List of technologies
-const technologies = [
-  "React",
-  "A React hook",
-  "React component optimization",
-  "React query library",
-  "Solidity",
-  "Solidity gas optimizations",
-  "TypeScript",
-  "SQL",
-  "Prisma",
-  "tRPC",
-  "Zod",
-  "Blockchain",
-];
-
 async function main() {
+  const prompt = `Give me 1 useful tip for when using React`;
   try {
-    const randomTech =
-      technologies[Math.floor(Math.random() * technologies.length)];
-
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: `Give a specific tip related to ${randomTech} in the context of web development. keep it as concise as possible. Avoid obvious advice like using the latest versions of technologies. add the end add a # like a tweet`,
+      prompt,
       temperature: 0.9,
-      max_tokens: 130,
+      max_tokens: 120,
     });
 
     const tweetText = response.data.choices[0].text;
-    console.log("prompt:", randomTech);
+    console.log("prompt:", prompt);
     console.log(tweetText);
 
     if (tweetText) {
-      await rwTwitterClient.v2.tweet(tweetText);
+      await rwTwitterClient.v2.tweet(`${tweetText} #React`);
     } else {
       throw Error("No tweetText available");
     }
